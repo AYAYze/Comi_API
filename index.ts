@@ -3,13 +3,13 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import sqlite from 'sqlite3';
 import fs from 'fs';
-import https from 'https';
-
+//import https from 'https';
+/*
 const options = {
     key: fs.readFileSync('./comi.kro.kr/private.key'),
     cert: fs.readFileSync('./comi.kro.kr/certificate.crt')
 }; 
-
+*/
 
 const db = new sqlite.Database('./db/post.db', err=>{
     if (err) {
@@ -25,7 +25,8 @@ db.run(`CREATE TABLE IF NOT EXISTS ${tableName}(
     pageUrl TEXT,
     txt TEXT,
     x INTEGER,
-    y INTEGER
+    y INTEGER,
+    date TEXT
 )`)
 
 
@@ -40,11 +41,12 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.json());
 app.post('/comments/', (req, res) => {
     
-    db.run(`INSERT INTO ${tableName} (pageUrl, txt, x, y) VALUES (
+    db.run(`INSERT INTO ${tableName} (pageUrl, txt, x, y,date) VALUES (
         "${req.body.pageUrl}", 
         "${req.body.txt}", 
         ${req.body.x}, 
-        ${req.body.y}
+        ${req.body.y},
+        ${req.body.date}
     )`)
 });
 
@@ -53,6 +55,7 @@ class sqlType {
     public txt : string;
     public x : number;
     public y : number;
+    public date : string;
 }
 
 app.post('/getpost/', (req, res) =>{
@@ -64,7 +67,8 @@ app.post('/getpost/', (req, res) =>{
             result.push({
                 txt: row["txt"],
                 x: row["x"],
-                y: row["y"]
+                y: row["y"],
+                date: row["date"]
             });
         })
         res.json({
@@ -75,5 +79,7 @@ app.post('/getpost/', (req, res) =>{
 
 });
 
-const server = https.createServer(options, app);
-server.listen(PORT);
+//const server = https.createServer(options, app);
+//server.listen(PORT);
+
+app.listen(PORT);
