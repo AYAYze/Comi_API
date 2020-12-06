@@ -40,13 +40,12 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.json());
 app.post('/comments/', (req, res) => {
-    
     db.run(`INSERT INTO ${tableName} (pageUrl, txt, x, y,date) VALUES (
         "${req.body.pageUrl}", 
         "${req.body.txt}", 
         ${req.body.x}, 
         ${req.body.y},
-        ${req.body.date}
+        '${req.body.date}'
     )`)
 });
 
@@ -61,7 +60,7 @@ class sqlType {
 app.post('/getpost/', (req, res) =>{
     let url = req.body.pageUrl;
     let result:sqlType[] = [];
-    db.all(`SELECT txt,x,y FROM ${tableName} WHERE pageUrl = "${url}"`, (err,rows) =>{
+    db.all(`SELECT txt,x,y,date FROM ${tableName} WHERE pageUrl = "${url}"`, (err,rows) =>{
         if(err) return;
         rows.forEach(row => {
             result.push({
